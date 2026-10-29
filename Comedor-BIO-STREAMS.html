@@ -1,0 +1,705 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Espelho meu, espelho meu, que tipo de comilão sou eu?</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap">
+<style>
+/* Layout: uma coluna central de 760px; no ecrã largo, painel do avatar e das barras fica ao lado da missão. */
+:root {
+  --paper: #F4F7EF;
+  --card: #FFFFFF;
+  --ink: #23303A;
+  --muted: #53626A;
+  --line: #23303A;
+  --shadow: #23303A;
+  --gold: #F5B800;
+  --blue: #5CC8EE;
+  --green: #7BC96F;
+  --red: #E4574E;
+  --gold-t: #FFF1BD;
+  --blue-t: #DDF3FB;
+  --green-t: #E1F3DB;
+  --red-t: #FCE3DF;
+  --track: #DDE3D8;
+  --on: #23303A;
+  --badge: #FFF8E1;
+  --focus: #1B7FA8;
+  --display: 'Fredoka', 'Trebuchet MS', system-ui, sans-serif;
+  --body: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #141C23; --card: #1F2A33; --ink: #EEF3EA; --muted: #A9B8B4; --line: #86999A; --shadow: #0A0F13;
+    --gold-t: #3A3217; --blue-t: #173441; --green-t: #1B3320; --red-t: #3F211E; --track: #33434D; --focus: #7FD3F2;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #141C23; --card: #1F2A33; --ink: #EEF3EA; --muted: #A9B8B4; --line: #86999A; --shadow: #0A0F13;
+  --gold-t: #3A3217; --blue-t: #173441; --green-t: #1B3320; --red-t: #3F211E; --track: #33434D; --focus: #7FD3F2;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.45;
+  padding-block: 20px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 760px; margin-inline: auto; display: flex; flex-direction: column; gap: 18px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 700; line-height: 1.08; margin: 0; text-wrap: balance; }
+p { margin: 0; }
+button, input { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 600; font-size: 15px; letter-spacing: .14em; }
+.tri { display: flex; gap: 5px; }
+.tri i { width: 26px; height: 9px; border-radius: 5px; border: 2px solid var(--line); display: block; }
+.tri i:nth-child(1) { background: var(--gold); } .tri i:nth-child(2) { background: var(--blue); } .tri i:nth-child(3) { background: var(--green); }
+.linkbtn { background: none; border: 0; padding: 8px 4px; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; min-height: 44px; }
+
+.card { background: var(--card); border: 3px solid var(--line); border-radius: 22px; box-shadow: 0 5px 0 var(--shadow); padding: 20px; }
+.kicker { font-family: var(--display); font-weight: 600; font-size: 14px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 10px 22px;
+  background: var(--gold); color: var(--on); border: 3px solid var(--line); border-radius: 16px; box-shadow: 0 4px 0 var(--shadow);
+  font-family: var(--display); font-weight: 600; font-size: 20px; cursor: pointer;
+}
+.btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--shadow); }
+.btn.alt { background: var(--card); color: var(--ink); }
+.btn.small { min-height: 44px; font-size: 17px; padding: 6px 16px; }
+.btn[disabled] { opacity: .55; cursor: not-allowed; }
+
+/* início */
+.hero h1 { font-size: clamp(38px, 8vw, 62px); }
+.hero .lead { font-size: 19px; font-weight: 700; margin-top: 10px; }
+.steps { display: flex; gap: 10px; flex-wrap: wrap; margin: 16px 0 4px; padding: 0; list-style: none; }
+.steps li { display: flex; align-items: center; gap: 8px; background: var(--gold-t); border: 2px solid var(--line); border-radius: 999px; padding: 4px 14px 4px 6px; font-weight: 800; font-size: 15px; }
+.steps .dot { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--line); background: var(--badge); display: grid; place-items: center; }
+.picker { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 12px 0 0; padding: 0; border: 0; }
+.picker label { position: relative; cursor: pointer; }
+.picker input { position: absolute; opacity: 0; inset: 0; }
+.picker .av { display: grid; place-items: center; padding: 8px 4px 6px; border: 3px solid var(--line); border-radius: 18px; background: var(--card); gap: 2px; font-weight: 800; font-size: 14px; }
+.picker input:checked + .av { background: var(--gold-t); box-shadow: 0 4px 0 var(--shadow); transform: translateY(-2px); }
+.picker input:focus-visible + .av { outline: 3px solid var(--focus); outline-offset: 3px; }
+.pickerlegend { font-family: var(--display); font-weight: 600; font-size: 20px; padding: 0; }
+.opt-row { display: flex; align-items: center; gap: 12px; margin-top: 16px; font-weight: 800; }
+.opt-row input { width: 24px; height: 24px; accent-color: var(--green); }
+.startrow { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; align-items: center; }
+
+/* jogo */
+.play { display: grid; gap: 18px; grid-template-columns: 1fr; }
+@media (min-width: 760px) { .play { grid-template-columns: 230px 1fr; align-items: start; } .hud { position: sticky; top: 16px; } }
+.hud { display: grid; grid-template-columns: 84px 1fr; gap: 14px; align-items: center; }
+@media (min-width: 760px) { .hud { grid-template-columns: 1fr; justify-items: center; } .hud .meters { width: 100%; } }
+.who { width: 84px; height: 84px; }
+@media (min-width: 760px) { .who { width: 130px; height: 130px; } }
+.meters { display: grid; gap: 10px; }
+.meter { display: grid; grid-template-columns: 26px 1fr auto; gap: 8px; align-items: center; font-weight: 800; font-size: 14px; }
+.pips { display: flex; gap: 3px; }
+.pips b { flex: 1; height: 14px; border-radius: 4px; background: var(--track); border: 1.5px solid var(--line); }
+.pips b.on.t { background: var(--blue); } .pips b.on.e { background: var(--gold); } .pips b.on.s { background: var(--green); }
+.mhead { display: flex; align-items: center; gap: 14px; }
+.badge { width: 64px; height: 64px; flex: none; border-radius: 50%; background: var(--badge); border: 3px solid var(--line); display: grid; place-items: center; }
+.mhead h2 { font-size: clamp(26px, 5vw, 34px); }
+.progress { display: flex; gap: 5px; margin: 14px 0 10px; }
+.progress i { flex: 1; height: 10px; border-radius: 5px; background: var(--track); border: 2px solid var(--line); }
+.progress i.done { background: var(--green); } .progress i.now { background: var(--gold); }
+.clock { height: 12px; border-radius: 6px; border: 2px solid var(--line); background: var(--track); overflow: hidden; margin-bottom: 14px; }
+.clock > div { height: 100%; width: 100%; background: var(--blue); }
+.clock.low > div { background: var(--red); }
+.scenario { font-size: 19px; font-weight: 700; margin-bottom: 14px; }
+.opts { display: grid; gap: 10px; }
+.opt {
+  display: grid; grid-template-columns: 38px 1fr; gap: 12px; align-items: center; text-align: left; width: 100%;
+  min-height: 56px; padding: 10px 14px 10px 10px; background: var(--card); border: 3px solid var(--line); border-radius: 16px;
+  box-shadow: 0 3px 0 var(--shadow); cursor: pointer; font-weight: 700; line-height: 1.3;
+}
+.opt .key { width: 36px; height: 36px; border-radius: 10px; border: 2.5px solid var(--line); background: var(--gold); color: var(--on); display: grid; place-items: center; font-family: var(--display); font-weight: 700; font-size: 18px; }
+.opt:hover:not([disabled]) { background: var(--gold-t); }
+.opt[disabled] { cursor: default; opacity: .62; box-shadow: none; }
+.opt.picked { opacity: 1; background: var(--gold-t); box-shadow: 0 3px 0 var(--shadow); }
+.fb { margin-top: 14px; padding: 12px 14px; border: 3px dashed var(--line); border-radius: 16px; background: var(--blue-t); display: grid; gap: 8px; }
+.fb strong { font-family: var(--display); font-weight: 600; font-size: 20px; }
+.deltas { display: flex; gap: 8px; flex-wrap: wrap; }
+.deltas span { border: 2px solid var(--line); border-radius: 999px; padding: 1px 12px; font-weight: 800; font-size: 15px; background: var(--card); font-variant-numeric: tabular-nums; }
+#nextBtn { margin-top: 14px; }
+
+/* bónus */
+.bonus fieldset { border: 0; padding: 0; margin: 0 0 20px; display: grid; gap: 8px; }
+.bonus legend { font-weight: 800; font-size: 18px; padding: 0 0 6px; }
+.choice { display: flex; align-items: center; gap: 12px; padding: 10px 12px; min-height: 48px; border: 3px solid var(--line); border-radius: 14px; background: var(--card); cursor: pointer; font-weight: 700; }
+.choice:has(input:checked) { background: var(--gold-t); }
+.choice:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 3px; }
+.choice input { width: 22px; height: 22px; accent-color: var(--green); flex: none; }
+.choice.off { opacity: .5; cursor: not-allowed; }
+.range { display: flex; align-items: center; gap: 14px; }
+.range input { flex: 1; min-width: 0; accent-color: var(--green); height: 36px; }
+.range output { font-family: var(--display); font-weight: 700; font-size: 28px; width: 32px; text-align: center; }
+.rangehint { display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; color: var(--muted); }
+.text { width: 100%; min-height: 52px; padding: 10px 14px; border: 3px solid var(--line); border-radius: 14px; background: var(--card); }
+
+/* resultado */
+.profile { overflow: hidden; padding: 0; }
+.pband { display: flex; align-items: center; gap: 16px; padding: 18px 20px; border-bottom: 3px solid var(--line); color: var(--on); }
+.pband .badge { width: 84px; height: 84px; }
+.pband h2 { font-size: clamp(28px, 6vw, 40px); }
+.pband p { font-weight: 800; }
+.pbody { padding: 18px 20px 20px; display: grid; gap: 14px; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip { border: 2.5px solid var(--line); border-radius: 999px; padding: 2px 14px; font-weight: 800; font-size: 15px; background: var(--card); }
+.tips { margin: 0; padding-left: 22px; display: grid; gap: 8px; font-weight: 700; }
+.bars { display: grid; gap: 8px; }
+.bar { display: grid; grid-template-columns: 120px 1fr 34px; gap: 10px; align-items: center; font-weight: 800; font-size: 15px; }
+@media (max-width: 480px) { .bar { grid-template-columns: 92px 1fr 30px; font-size: 14px; } }
+.bar .track { height: 20px; border: 2.5px solid var(--line); border-radius: 10px; background: var(--track); overflow: hidden; }
+.bar .fill { height: 100%; }
+.bar b { text-align: right; font-variant-numeric: tabular-nums; }
+.fill.T { background: var(--blue); } .fill.E { background: var(--gold); } .fill.S { background: var(--red); } .fill.B { background: var(--green); }
+.codebox { display: flex; gap: 10px; flex-wrap: wrap; }
+.codebox input { flex: 1; min-width: 200px; padding: 10px 12px; border: 3px solid var(--line); border-radius: 14px; background: var(--card); font-weight: 700; }
+.actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.note { font-size: 15px; font-weight: 700; color: var(--muted); }
+
+/* turma */
+.classrow { display: grid; grid-template-columns: 52px 1fr auto; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 2px dashed var(--line); }
+.classrow:last-of-type { border-bottom: 0; }
+.classrow .badge { width: 52px; height: 52px; }
+.cname { font-weight: 800; }
+.cbar { height: 18px; border: 2.5px solid var(--line); border-radius: 9px; background: var(--track); overflow: hidden; margin-top: 4px; }
+.cbar i { display: block; height: 100%; }
+.counter { display: flex; align-items: center; gap: 8px; }
+.counter button { width: 44px; height: 44px; border: 3px solid var(--line); border-radius: 12px; background: var(--card); font-family: var(--display); font-weight: 700; font-size: 24px; cursor: pointer; }
+.counter output { font-family: var(--display); font-weight: 700; font-size: 26px; min-width: 32px; text-align: center; font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: no-preference) {
+  .opt, .btn { transition: transform .08s, box-shadow .08s, background .12s; }
+  .pips b { transition: background .25s; }
+}
+</style>
+<style>[hidden]{display:none!important}body{margin:0}</style>
+</head>
+<body>
+
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+<symbol id="i-moeda" viewBox="0 0 48 48"><g stroke="#23303A" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"><circle cx="24" cy="24" r="18" fill="#F7C531"/><circle cx="24" cy="24" r="12" fill="none" stroke-width="1.8"/><text x="24" y="31" text-anchor="middle" font-family="Fredoka, sans-serif" font-size="19" font-weight="700" fill="#23303A" stroke="none">€</text></g></symbol>
+<symbol id="i-argola" viewBox="0 0 48 48"><g stroke="#23303A" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"><circle cx="24" cy="24" r="18" fill="#F0B957"/><circle cx="24" cy="24" r="7" fill="#FFF8E1"/><path d="M13 17c3-4 7-5 10-5M34 31c-3 4-7 5-10 5" fill="none" stroke="#FFFFFF" stroke-width="2.4"/></g></symbol>
+<symbol id="i-coin" viewBox="0 0 48 48"><g stroke="#23303A" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"><path d="M10 30v6c0 3.3 6.3 6 14 6s14-2.7 14-6v-6z" fill="#E3A700"/><ellipse cx="24" cy="30" rx="14" ry="6" fill="#F7C531"/><path d="M10 20v6c0 3.3 6.3 6 14 6s14-2.7 14-6v-6z" fill="#E3A700"/><ellipse cx="24" cy="20" rx="14" ry="6" fill="#F7C531"/><path d="M10 10v6c0 3.3 6.3 6 14 6s14-2.7 14-6v-6z" fill="#E3A700"/><ellipse cx="24" cy="10" rx="14" ry="6" fill="#F7C531"/></g></symbol>
+<symbol id="i-pig" viewBox="0 0 48 48"><g stroke="#23303A" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"><circle cx="22" cy="8" r="5" fill="#F7C531"/><ellipse cx="22" cy="29" rx="16" ry="12" fill="#F4A6B7"/><path d="M11 21l-1-9 9 4z" fill="#F4A6B7"/><rect x="12" y="36" width="6" height="8" rx="2" fill="#EE8CA2"/><rect x="27" y="36" width="6" height="8" rx="2" fill="#EE8CA2"/><ellipse cx="37" cy="30" rx="5.5" ry="4.5" fill="#EE8CA2"/><circle cx="31" cy="25" r="1.6" fill="#23303A" stroke="none"/><path d="M17 20h9" stroke-width="3.5"/></g></symbol>
+<symbol id="i-cart" viewBox="0 0 48 48"><g stroke="#23303A" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"><path d="M13 14h29l-5 16H17z" fill="#FBE29A"/><path d="M3 7h8l6 24h21" fill="none"/><path d="M21 14l2 16M29 14v16M36 14l-2 16" stroke-width="1.8" fill="none"/><circle cx="19" cy="38" r="3.6" fill="#F7C531"/><circle cx="35" cy="38" r="3.6" fill="#F7C531"/></g></symbol>
+<symbol id="i-hourglass" viewBox="0 0 48 48"><g stroke="#23303A" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"><path d="M14 5c0 10 6 14 10 19-4 5-10 9-10 19h20c0-10-6-14-10-19 4-5 10-9 10-19z" fill="#CFEFFA"/><path d="M19 38c2-4 3.5-5.5 5-5.5s3 1.5 5 5.5z" fill="#F5B800" stroke-width="1.8"/><path d="M22 14h4l-2 3z" fill="#F5B800" stroke-width="1.5"/><path d="M11 5h26M11 43h26" stroke-width="4"/></g></symbol>
+<symbol id="i-alarm" viewBox="0 0 48 48"><g stroke="#23303A" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"><circle cx="10" cy="12" r="6" fill="#5CC8EE"/><circle cx="38" cy="12" r="6" fill="#5CC8EE"/><circle cx="24" cy="26" r="16" fill="#FFFFFF"/><path d="M24 26v-9M24 26l7 4" fill="none"/><path d="M14 40l-4 5M34 40l4 5" fill="none"/><circle cx="24" cy="26" r="1.5" fill="#23303A"/></g></symbol>
+<symbol id="i-burger" viewBox="0 0 48 48"><g stroke="#23303A" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"><path d="M8 36h32c0 5-3 8-8 8H16c-5 0-8-3-8-8z" fill="#F2A33C"/><rect x="6" y="28" width="36" height="8" rx="4" fill="#7A4A2B"/><path d="M5 22H43V26C40 30 38 27 35 29C32 31 30 27 27 29C24 31 22 27 19 29C16 31 14 27 11 29C8 30 6 28 5 26Z" fill="#6DBE5B"/><path d="M7 20c0-9 8-14 17-14s17 5 17 14z" fill="#F2A33C"/><g fill="#FFF3D6" stroke="none"><ellipse cx="17" cy="13" rx="2.2" ry="1.2"/><ellipse cx="25" cy="10" rx="2.2" ry="1.2"/><ellipse cx="32" cy="14" rx="2.2" ry="1.2"/></g></g></symbol>
+<symbol id="i-pizza" viewBox="0 0 48 48"><g stroke="#23303A" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"><path d="M24 45L5 13c11-9 27-9 38 0z" fill="#F6D27A"/><path d="M5 13c11-9 27-9 38 0" fill="none" stroke-width="9"/><path d="M5 13c11-9 27-9 38 0" fill="none" stroke="#E0A24A" stroke-width="5"/><g fill="#D6403A" stroke-width="2"><circle cx="19" cy="22" r="3.6"/><circle cx="30" cy="23" r="3.6"/><circle cx="24" cy="33" r="3.6"/></g></g></symbol>
+<symbol id="i-leaf" viewBox="0 0 48 48"><g stroke="#23303A" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"><path d="M8 40C6 20 18 8 40 8c0 22-10 32-32 32z" fill="#7BC96F"/><path d="M10 38L30 18" fill="none"/></g></symbol>
+<symbol id="i-apple" viewBox="0 0 48 48"><g stroke="#23303A" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"><path d="M24 15c-8-6-18 0-16 13 1 9 8 16 13 16 1.5 0 2-.8 3-.8s1.5.8 3 .8c5 0 12-7 13-16 2-13-8-19-16-13z" fill="#E4574E"/><path d="M24 15c0-4 1-7 4-9" fill="none"/><path d="M26 8c3-3 8-2 9 0-2 3-7 4-9 0z" fill="#7BC96F"/></g></symbol>
+<symbol id="i-mesa" viewBox="0 0 48 48"><g stroke="#23303A" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"><rect x="19" y="2" width="10" height="6" rx="3" fill="#C98A4B"/><rect x="19" y="40" width="10" height="6" rx="3" fill="#C98A4B"/><rect x="2" y="19" width="6" height="10" rx="3" fill="#C98A4B"/><rect x="40" y="19" width="6" height="10" rx="3" fill="#C98A4B"/><circle cx="24" cy="24" r="15" fill="#FFFFFF"/><circle cx="24" cy="24" r="15" fill="none" stroke="#E4574E" stroke-width="2" stroke-dasharray="4 4"/><circle cx="24" cy="15" r="3.4" fill="#CDEEFA" stroke-width="1.8"/><circle cx="24" cy="33" r="3.4" fill="#CDEEFA" stroke-width="1.8"/><circle cx="15" cy="24" r="3.4" fill="#CDEEFA" stroke-width="1.8"/><circle cx="33" cy="24" r="3.4" fill="#CDEEFA" stroke-width="1.8"/></g></symbol>
+</defs>
+</svg>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><span class="tri" aria-hidden="true"><i></i><i></i><i></i></span>BIO-STREAMS</div>
+    <button class="linkbtn" id="goClass" type="button">Mapa da turma (professor)</button>
+  </header>
+
+  <section id="s-start" class="card hero">
+    <div class="kicker">Antes de jogar o tabuleiro</div>
+    <h1>Que tipo de comedor és?</h1>
+    <p class="lead">8 missões do dia a dia. Escolhe o que fazias de verdade, não o que fica bem.</p>
+    <ul class="steps">
+      <li><span class="dot">1</span>Escolhe o teu avatar</li>
+      <li><span class="dot">2</span>Cumpre 8 missões</li>
+      <li><span class="dot">3</span>Descobre a tua barreira</li>
+    </ul>
+    <fieldset class="picker" id="picker">
+      <legend class="pickerlegend">O teu avatar</legend>
+    </fieldset>
+    <label class="opt-row"><input type="checkbox" id="clockOn" checked>Modo relógio: 20 segundos por missão</label>
+    <div class="startrow">
+      <button class="btn" id="startBtn" type="button">Começar</button>
+      <span class="note">Anónimo. Nada sai do teu ecrã.</span>
+    </div>
+  </section>
+
+  <section id="s-play" class="play" hidden>
+    <aside class="card hud" aria-label="O teu estado">
+      <div class="who" id="who"></div>
+      <div class="meters" id="meters"></div>
+    </aside>
+    <div class="card">
+      <div class="progress" id="progress" aria-hidden="true"></div>
+      <div class="mhead">
+        <span class="badge" id="mIcon"></span>
+        <div><div class="kicker" id="mKick"></div><h2 id="mTitle" tabindex="-1"></h2></div>
+      </div>
+      <div class="clock" id="clock" style="margin-top:14px" aria-hidden="true"><div id="clockFill"></div></div>
+      <p class="scenario" id="mText"></p>
+      <div class="opts" id="opts"></div>
+      <div class="fb" id="fb" hidden aria-live="polite"></div>
+      <button class="btn" id="nextBtn" type="button" hidden>Próxima missão</button>
+    </div>
+  </section>
+
+  <section id="s-bonus" class="card bonus" hidden>
+    <div class="kicker">Ronda bónus</div>
+    <h2 id="bonusTitle" tabindex="-1" style="margin:6px 0 18px">Mais quatro coisas sobre ti</h2>
+    <fieldset>
+      <legend>Quem decide o que se come lá em casa?</legend>
+      <label class="choice"><input type="radio" name="decide" value="Adultos">Os adultos. Eu como o que há.</label>
+      <label class="choice"><input type="radio" name="decide" value="Eu">Decido eu quase sempre.</label>
+      <label class="choice"><input type="radio" name="decide" value="Negociamos">Negociamos.</label>
+    </fieldset>
+    <fieldset>
+      <legend>De 1 a 5, quão saudável é a tua alimentação?</legend>
+      <div class="range"><input type="range" id="rate" min="1" max="5" step="1" value="3" aria-label="Autoavaliação de 1 a 5"><output id="rateOut" for="rate">3</output></div>
+      <div class="rangehint"><span>1 = batatas fritas ao pequeno-almoço</span><span>5 = atleta olímpico</span></div>
+    </fieldset>
+    <fieldset id="helpSet">
+      <legend>O que te faria comer melhor? Escolhe até duas.</legend>
+      <label class="choice"><input type="checkbox" name="help" value="receitas de 15 min">Receitas que fico prontas em 15 minutos</label>
+      <label class="choice"><input type="checkbox" name="help" value="opções baratas">Opções baratas e bem planeadas</label>
+      <label class="choice"><input type="checkbox" name="help" value="alternativas às fast-food">Alternativas saborosas às fast-food</label>
+      <label class="choice"><input type="checkbox" name="help" value="app com IA">Uma app com inteligência artificial que me ajuda</label>
+      <label class="choice"><input type="checkbox" name="help" value="aprender a cozinhar">Aprender a cozinhar</label>
+      <label class="choice"><input type="checkbox" name="help" value="nada">Nada, já como bem</label>
+    </fieldset>
+    <fieldset>
+      <legend><label for="phrase">Completa a frase: comia mais saudável se…</label></legend>
+      <input class="text" id="phrase" type="text" maxlength="120" autocomplete="off">
+    </fieldset>
+    <button class="btn" id="revealBtn" type="button">Revelar o meu perfil</button>
+  </section>
+
+  <section id="s-result" hidden>
+    <div class="kicker" style="margin-bottom:8px">O teu resultado</div>
+    <div id="profiles" style="display:grid;gap:18px"></div>
+    <div class="card" style="margin-top:18px;display:grid;gap:14px">
+      <h3 style="font-size:24px">As tuas 8 missões</h3>
+      <div class="bars" id="bars"></div>
+      <p class="note" id="bonusEcho"></p>
+      <div class="codebox">
+        <label for="codeOut" class="note" style="width:100%">Código para o professor registar no quadro</label>
+        <input id="codeOut" type="text" readonly>
+        <button class="btn small alt" id="copyBtn" type="button">Copiar</button>
+      </div>
+      <div class="actions">
+        <button class="btn" id="againBtn" type="button">Jogar outra vez</button>
+        <button class="btn alt" id="tallyBtn" type="button">Somar à turma neste ecrã</button>
+      </div>
+      <p class="note" id="tallyMsg" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <section id="s-class" class="card" hidden>
+    <div class="kicker">Para o professor</div>
+    <h2 id="classTitle" tabindex="-1" style="margin:6px 0 6px">Mapa da turma</h2>
+    <p class="note" style="margin-bottom:10px">Cada aluno diz o seu perfil e toca em +. O gráfico fica guardado neste dispositivo e serve de pergunta de partida para o debate.</p>
+    <div id="classRows"></div>
+    <p style="font-weight:800;margin:12px 0" id="classTotal"></p>
+    <div class="actions">
+      <button class="btn alt" id="classBack" type="button">Voltar</button>
+      <button class="btn alt small" id="classReset" type="button">Apagar contagens</button>
+    </div>
+  </section>
+</div>
+
+<script>
+(function () {
+  var $ = function (s) { return document.querySelector(s); };
+  var ICON = function (n, s) { return '<svg viewBox="0 0 48 48" width="' + s + '" height="' + s + '" aria-hidden="true"><use href="#i-' + n + '"></use></svg>'; };
+
+  /* ==================== EDITA AQUI: AS 8 MISSÕES ====================
+     Cada missão tem: icon (alarm, coin, mesa, pizza, cart, leaf, apple, hourglass),
+     title (título), text (cenário) e 4 opções [texto, letra].
+     Letra da opção: T = falta de Tempo, E = Economia (dinheiro), S = Sabor, B = já resolve Bem.
+     Podes mudar os textos entre aspas e a ordem das opções. Não apagues vírgulas nem parênteses. */
+  var MISSIONS = [
+    { icon: 'alarm', title: 'Manhã de pressa', text: 'São 7h40 e o pequeno-almoço está à tua espera. O que acontece?', opts: [
+      ['Nada do que há em casa me apetece, por isso saio sem comer.', 'S'],
+      ['O despertador falhou e só dá tempo de sair a correr.', 'T'],
+      ['Tomo um pequeno-almoço decente, sem stress.', 'B'],
+      ['O que há em casa é pouco, e comprar algo na rua custa dinheiro.', 'E']] },
+    { icon: 'coin', title: 'O intervalo das 11h', text: 'Tens 15 minutos e a barriga a fazer barulhos de baleia. O que fazes?', opts: [
+      ['Trouxe uma sandes e fruta de casa. Estou safo.', 'B'],
+      ['Vejo o que é mais barato na máquina e que me enche.', 'E'],
+      ['A fila é enorme e levo o que for mais rápido.', 'T'],
+      ['Vou ao que me sabe melhor: bolachas ou batatas fritas, sem discussão.', 'S']] },
+    { icon: 'mesa', title: 'O jantar lá em casa', text: 'Como é que costuma ser?', opts: [
+      ['Cozinha-se o mais barato, porque a comida boa e variada custa dinheiro.', 'E'],
+      ['Chegamos tarde e cansados: pré-cozinhados e micro-ondas!', 'T'],
+      ['Há legumes no prato, mas é preciso uma negociação para os comer.', 'S'],
+      ['Faz-se algo simples e saudável, com a ajuda de todos.', 'B']] },
+    { icon: 'pizza', title: 'Sexta-feira, noite de pizza', text: 'Porque é que a pizza ou o hambúrguer ganha?', opts: [
+      ['Porque sabem melhor do que qualquer alternativa.', 'S'],
+      ['Nem sempre ganha: muitas vezes fazemos uma versão caseira.', 'B'],
+      ['Porque ninguém tem pachorra para cozinhar ao fim da semana.', 'T'],
+      ['Porque há promoção e sai mais barato do que cozinhar.', 'E']] },
+    { icon: 'cart', title: 'Missão supermercado', text: 'Vais às compras com a família. O que decide o que entra no carrinho?', opts: [
+      ['Despacho-me: quanto mais depressa sairmos, melhor.', 'T'],
+      ['Vai o que toda a gente aceita, para evitar queixas.', 'S'],
+      ['Há lista e confirmamos o que é fresco e de época.', 'B'],
+      ['Olho primeiro para o preço e para o que está em promoção.', 'E']] },
+    { icon: 'leaf', title: 'Sopa de legumes', text: 'Aparece uma tigela à tua frente. A tua reação?', opts: [
+      ['Cara de enjoo: não gosto do sabor nem da textura.', 'S'],
+      ['Perfeito, como sem problema.', 'B'],
+      ['Boa ideia, mas demora a fazer e raramente há.', 'T'],
+      ['Os legumes bons e frescos custam caro lá por casa.', 'E']] },
+    { icon: 'apple', title: 'A fruta abandonada', text: 'Há fruta em casa, mas fica na taça até estragar. Porquê?', opts: [
+      ['A fruta fresca estraga-se depressa e comprá-la pesa na carteira.', 'E'],
+      ['Não fica: como fruta todos os dias.', 'B'],
+      ['Se há um doce ao lado, a fruta perde sempre.', 'S'],
+      ['Lavar, descascar, cortar… dá trabalho e passo à frente.', 'T']] },
+    { icon: 'hourglass', title: 'Superpoder alimentar', text: 'Só podes escolher um para amanhã. Qual?', opts: [
+      ['Parar o relógio e ter horas de sobra para cozinhar.', 'T'],
+      ['Um cartão de supermercado sem limite.', 'E'],
+      ['Fazer qualquer legume saber ao meu prato preferido.', 'S'],
+      ['Nenhum: já me desenrasco bem e depressa.', 'B']] }
+  ];
+
+  /* ==================== EDITA AQUI: BARRAS E REAÇÕES ====================
+     FX: o que cada letra faz às barras (t = Tempo, e = Moedas, s = Saúde). Números positivos sobem, negativos descem.
+     REACT: frases curtas que aparecem depois de cada resposta. */
+  var FX = { T: { t: -2, s: -1 }, E: { e: -2, s: -1 }, S: { s: -2 }, B: { s: 2, t: 1, e: 1 } };
+  var MOOD = { T: 'tired', E: 'coin', S: 'yum', B: 'happy' };
+  var REACT = {
+    T: ['O relógio ganhou esta ronda.', 'Sem tempo, até o pão torrado fugiu.', 'Quem corre, não cozinha.'],
+    E: ['A carteira respirou fundo.', 'Cada cêntimo foi contado duas vezes.', 'O preço mandou na decisão.'],
+    S: ['O sabor falou mais alto.', 'As papilas votaram por unanimidade.', 'O ultraprocessado piscou o olho.'],
+    B: ['Boa! Isso é um bom truque.', 'Estás a jogar como um chef.', 'O prato agradece.']
+  };
+  var AVATARS = [
+    { name: 'Ouro', c: '#F5B800' }, { name: 'Céu', c: '#5CC8EE' }, { name: 'Folha', c: '#7BC96F' }, { name: 'Tomate', c: '#E4574E' }
+  ];
+  /* ==================== EDITA AQUI: OS 4 PERFIS DE RESULTADO ====================
+     name = nome do perfil, tag = frase curta, route = rota do tabuleiro, tool = ferramenta da App,
+     tips = os três truques. icon: alarm, pig, burger ou apple. */
+  var PROFILES = {
+    T: { name: 'Mestre do Relógio', icon: 'alarm', bg: 'var(--blue)', tag: 'Sabes o que é saudável, mas o relógio manda.', route: 'Rota do Tempo', tool: 'Mini-jogo dos 60 segundos',
+      tips: ['Domingo de caixas: 1 hora a preparar arroz integral, ovos cozidos e legumes assados dá refeições para 3 dias.',
+             'Tem sempre legumes congelados e ovos em casa: uma omelete completa leva 15 minutos.',
+             'Leva fruta que não precisa de descascar, como maçã, banana ou tangerina.'] },
+    E: { name: 'Caçador de Promoções', icon: 'pig', bg: 'var(--gold)', tag: 'Cada euro conta e tu sabes fazê-lo render.', route: 'Rota da Economia', tool: 'Gestor de Orçamento',
+      tips: ['Compara o preço ao quilo e escolhe legumes da época: são mais frescos e mais baratos.',
+             'Leguminosas e ovos enchem o prato por poucas moedas.',
+             'Transforma as sobras de ontem no almoço de hoje: desperdício zero.'] },
+    S: { name: 'Rei das Papilas', icon: 'burger', bg: '#F28B82', tag: 'O sabor decide, e o ultraprocessado tem boa publicidade.', route: 'Rota do Sabor', tool: 'Alternativa saudável e Despensa Inteligente',
+      tips: ['Pede à IA uma versão saudável do teu favorito, como uma pizza de frigideira com base de wrap.',
+             'Prova o mesmo legume assado, em vez de cozido: o sabor muda completamente.',
+             'Junta ervas, especiarias e cores novas ao prato antes de dizeres que não gostas.'] },
+    B: { name: 'Chef Equilibrado', icon: 'apple', bg: 'var(--green)', tag: 'Já te desenrascas com tempo, dinheiro e sabor.', route: 'Qualquer rota', tool: 'Mentor da turma',
+      tips: ['Partilha o teu melhor truque com a turma no debate.',
+             'Ajuda um colega a montar a sua primeira refeição rápida.',
+             'Escolhe a rota mais difícil no tabuleiro e dá o exemplo.'] }
+  };
+  var LABEL = { T: 'Tempo', E: 'Dinheiro', S: 'Sabor', B: 'Resolve bem' };
+  var STORE = 'bio-turma-v1';
+
+  var st = null;
+  var timer = null;
+
+  function show(id) {
+    ['s-start', 's-play', 's-bonus', 's-result', 's-class'].forEach(function (s) { $('#' + s).hidden = (s !== id); });
+    window.scrollTo(0, 0);
+  }
+
+  /* avatar */
+  function face(color, mood, size) {
+    var o = 'stroke:#23303A;stroke-width:3;stroke-linejoin:round;stroke-linecap:round';
+    var ink = '#23303A';
+    var eyes, mouth;
+    if (mood === 'tired') {
+      eyes = '<path d="M-16 -3H-7M7 -3H16" style="' + o + ';fill:none"/>';
+      mouth = '<path d="M-6 11H6" style="' + o + ';fill:none"/><path d="M26 -20q3 6 0 9" style="stroke:#23303A;stroke-width:2.5;fill:#CDEEFA"/>';
+    } else if (mood === 'coin') {
+      eyes = '<text x="-11" y="2" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="700" font-size="15" fill="' + ink + '">€</text><text x="11" y="2" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="700" font-size="15" fill="' + ink + '">€</text>';
+      mouth = '<path d="M-8 9Q0 15 8 9" style="' + o + ';fill:none"/>';
+    } else if (mood === 'yum') {
+      eyes = '<path d="M-16 -1Q-11 -8 -6 -1M6 -1Q11 -8 16 -1" style="' + o + ';fill:none"/>';
+      mouth = '<ellipse cx="0" cy="11" rx="8" ry="6" style="' + o + ';fill:#8E3030"/><ellipse cx="0" cy="14" rx="4" ry="2.6" fill="#F2A0A0"/>';
+    } else if (mood === 'happy') {
+      eyes = '<circle cx="-11" cy="-4" r="3.4" fill="' + ink + '"/><circle cx="11" cy="-4" r="3.4" fill="' + ink + '"/>';
+      mouth = '<path d="M-12 6Q0 22 12 6Z" style="' + o + ';fill:#FFFFFF"/>';
+    } else {
+      eyes = '<circle cx="-11" cy="-4" r="3.4" fill="' + ink + '"/><circle cx="11" cy="-4" r="3.4" fill="' + ink + '"/>';
+      mouth = '<path d="M-9 8Q0 15 9 8" style="' + o + ';fill:none"/>';
+    }
+    return '<svg viewBox="-42 -46 84 84" width="' + size + '" height="' + size + '" role="img" aria-label="O teu avatar">' +
+      '<circle r="34" cx="0" cy="0" style="' + o + ';fill:' + color + '"/>' +
+      '<circle cx="-22" cy="7" r="5" fill="#F4A6B7" opacity=".7"/><circle cx="22" cy="7" r="5" fill="#F4A6B7" opacity=".7"/>' +
+      eyes + mouth + '</svg>';
+  }
+
+  function buildPicker() {
+    var h = '';
+    AVATARS.forEach(function (a, i) {
+      h += '<label><input type="radio" name="avatar" value="' + i + '"' + (i === 0 ? ' checked' : '') + '><span class="av">' + face(a.c, 'idle', 64) + '<span>' + a.name + '</span></span></label>';
+    });
+    $('#picker').insertAdjacentHTML('beforeend', h);
+  }
+
+  /* barras */
+  function drawMeters() {
+    var defs = [['t', 'Tempo', 'alarm'], ['e', 'Moedas', 'moeda'], ['s', 'Saúde', 'argola']];
+    var h = '';
+    defs.forEach(function (d) {
+      var v = st.m[d[0]];
+      var pips = '';
+      for (var i = 0; i < 10; i++) pips += '<b class="' + (i < v ? 'on ' + d[0] : '') + '"></b>';
+      h += '<div class="meter" role="img" aria-label="' + d[1] + ': ' + v + ' de 10">' + ICON(d[2], 26) + '<div class="pips">' + pips + '</div><span>' + v + '</span></div>';
+    });
+    $('#meters').innerHTML = h;
+  }
+  function clamp(v) { return Math.max(0, Math.min(10, v)); }
+
+  /* jogo */
+  function startGame() {
+    var av = parseInt((document.querySelector('input[name="avatar"]:checked') || { value: 0 }).value, 10);
+    st = { av: av, clock: $('#clockOn').checked, i: 0, c: { T: 0, E: 0, S: 0, B: 0 }, m: { t: 6, e: 6, s: 6 }, answered: false, skipped: 0, bonus: null, rem: 0 };
+    show('s-play');
+    renderMission();
+  }
+
+  function renderMission() {
+    var M = MISSIONS[st.i];
+    st.answered = false;
+    $('#who').innerHTML = face(AVATARS[st.av].c, 'idle', 130);
+    $('#who').setAttribute('style', '');
+    drawMeters();
+    var pr = '';
+    for (var k = 0; k < MISSIONS.length; k++) pr += '<i class="' + (k < st.i ? 'done' : (k === st.i ? 'now' : '')) + '"></i>';
+    $('#progress').innerHTML = pr;
+    $('#mIcon').innerHTML = ICON(M.icon, 44);
+    $('#mKick').textContent = 'Missão ' + (st.i + 1) + ' de ' + MISSIONS.length;
+    $('#mTitle').textContent = M.title;
+    $('#mText').textContent = M.text;
+    var h = '';
+    M.opts.forEach(function (o, i) {
+      h += '<button class="opt" type="button" data-i="' + i + '"><span class="key">' + 'ABCD'[i] + '</span><span>' + o[0] + '</span></button>';
+    });
+    $('#opts').innerHTML = h;
+    $('#fb').hidden = true;
+    $('#nextBtn').hidden = true;
+    $('#clock').hidden = !st.clock;
+    $('#mTitle').focus({ preventScroll: true });
+    startClock();
+  }
+
+  function startClock() {
+    stopClock();
+    if (!st.clock) return;
+    st.rem = 20000;
+    paintClock();
+    timer = setInterval(function () {
+      st.rem -= 100;
+      paintClock();
+      if (st.rem <= 0) { stopClock(); timeout(); }
+    }, 100);
+  }
+  function stopClock() { if (timer) { clearInterval(timer); timer = null; } }
+  function paintClock() {
+    $('#clockFill').style.width = Math.max(0, st.rem / 200) + '%';
+    $('#clock').classList.toggle('low', st.rem <= 6000);
+  }
+
+  function delta(d) {
+    var parts = [];
+    [['t', 'Tempo'], ['e', 'Moedas'], ['s', 'Saúde']].forEach(function (x) {
+      if (d[x[0]]) parts.push('<span>' + x[1] + ' ' + (d[x[0]] > 0 ? '+' : '−') + Math.abs(d[x[0]]) + '</span>');
+    });
+    return parts.join('');
+  }
+
+  function applyFx(d) {
+    ['t', 'e', 's'].forEach(function (k) { if (d[k]) st.m[k] = clamp(st.m[k] + d[k]); });
+    drawMeters();
+  }
+
+  function feedback(title, mood, d) {
+    $('#who').innerHTML = face(AVATARS[st.av].c, mood, 130);
+    $('#fb').innerHTML = '<strong>' + title + '</strong><div class="deltas">' + delta(d) + '</div>';
+    $('#fb').hidden = false;
+    var nb = $('#nextBtn');
+    nb.textContent = st.i === MISSIONS.length - 1 ? 'Ir para a ronda bónus' : 'Próxima missão';
+    nb.hidden = false;
+    nb.focus({ preventScroll: false });
+  }
+
+  function answer(i) {
+    if (st.answered) return;
+    st.answered = true;
+    stopClock();
+    var tag = MISSIONS[st.i].opts[i][1];
+    st.c[tag]++;
+    var btns = document.querySelectorAll('.opt');
+    btns.forEach(function (b, k) { b.disabled = true; if (k === i) b.classList.add('picked'); });
+    var pool = REACT[tag];
+    var d = FX[tag];
+    applyFx(d);
+    feedback(pool[(st.i + i) % pool.length], MOOD[tag], d);
+  }
+
+  function timeout() {
+    if (st.answered) return;
+    st.answered = true;
+    st.skipped++;
+    document.querySelectorAll('.opt').forEach(function (b) { b.disabled = true; });
+    var d = { t: -1 };
+    applyFx(d);
+    feedback('O tempo acabou! O relógio ganhou esta ronda.', 'tired', d);
+  }
+
+  function next() {
+    if (st.i < MISSIONS.length - 1) { st.i++; renderMission(); }
+    else { show('s-bonus'); $('#bonusTitle').focus({ preventScroll: true }); }
+  }
+
+  /* bónus e resultado */
+  function limitHelp() {
+    var boxes = document.querySelectorAll('input[name="help"]');
+    var n = document.querySelectorAll('input[name="help"]:checked').length;
+    boxes.forEach(function (b) {
+      var off = n >= 2 && !b.checked;
+      b.disabled = off;
+      b.parentNode.classList.toggle('off', off);
+    });
+  }
+
+  function reveal() {
+    var dec = document.querySelector('input[name="decide"]:checked');
+    var help = [];
+    document.querySelectorAll('input[name="help"]:checked').forEach(function (b) { help.push(b.value); });
+    st.bonus = { decide: dec ? dec.value : '-', rate: $('#rate').value, help: help, phrase: $('#phrase').value.trim() };
+    renderResult();
+    show('s-result');
+  }
+
+  function tops() {
+    var c = st.c;
+    var mx = Math.max(c.T, c.E, c.S);
+    if (mx === 0 && c.B === 0) return ['T'];
+    if (c.B > mx) return ['B'];
+    return ['T', 'E', 'S'].filter(function (k) { return c[k] === mx; });
+  }
+
+  function renderResult() {
+    var list = tops();
+    var h = '';
+    list.forEach(function (k) {
+      var p = PROFILES[k];
+      var tips = '';
+      p.tips.forEach(function (t) { tips += '<li>' + t + '</li>'; });
+      h += '<article class="card profile"><div class="pband" style="background:' + p.bg + '"><span class="badge">' + ICON(p.icon, 60) + '</span><div><h2>' + p.name + '</h2><p>' + p.tag + '</p></div></div>' +
+        '<div class="pbody"><div class="chips"><span class="chip">No tabuleiro: ' + p.route + '</span><span class="chip">App: ' + p.tool + '</span></div>' +
+        '<div><h3 style="font-size:20px;margin-bottom:8px">Três truques para a tua barreira</h3><ul class="tips">' + tips + '</ul></div></div></article>';
+    });
+    if (list.length > 1) h = '<p class="note" style="margin-bottom:-6px">Empate: os obstáculos costumam vir juntos. As três rotas do tabuleiro treinam-te para todos.</p>' + h;
+    $('#profiles').innerHTML = h;
+    $('#who') && null;
+
+    var total = MISSIONS.length - st.skipped;
+    var b = '';
+    ['T', 'E', 'S', 'B'].forEach(function (k) {
+      var w = total ? Math.round(st.c[k] / MISSIONS.length * 100) : 0;
+      b += '<div class="bar"><span>' + LABEL[k] + '</span><div class="track"><div class="fill ' + k + '" style="width:' + w + '%"></div></div><b>' + st.c[k] + '</b></div>';
+    });
+    $('#bars').innerHTML = b;
+
+    var bn = st.bonus;
+    var echo = [];
+    if (bn.decide !== '-') echo.push('Em casa decidem: ' + bn.decide.toLowerCase() + '.');
+    echo.push('Autoavaliação: ' + bn.rate + ' em 5.');
+    if (bn.help.length) echo.push('Ajudava-te: ' + bn.help.join(' e ') + '.');
+    if (bn.phrase) echo.push('A tua frase: “Comia mais saudável se ' + bn.phrase.replace(/[<>&]/g, '') + '”.');
+    $('#bonusEcho').textContent = echo.join(' ');
+    $('#codeOut').value = 'T' + st.c.T + ' E' + st.c.E + ' S' + st.c.S + ' B' + st.c.B + ' | ' + list.join('+') + ' | decide:' + bn.decide + ' | auto:' + bn.rate;
+    $('#tallyMsg').textContent = '';
+    $('#tallyBtn').disabled = false;
+  }
+
+  function copyCode() {
+    var inp = $('#codeOut');
+    var done = function () { $('#copyBtn').textContent = 'Copiado'; setTimeout(function () { $('#copyBtn').textContent = 'Copiar'; }, 1600); };
+    var fallback = function () { inp.focus(); inp.select(); $('#copyBtn').textContent = 'Seleciona e copia'; };
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(inp.value).then(done, fallback);
+      else fallback();
+    } catch (e) { fallback(); }
+  }
+
+  /* turma */
+  function loadTally() {
+    var t = { T: 0, E: 0, S: 0, B: 0 };
+    try { var raw = localStorage.getItem(STORE); if (raw) { var o = JSON.parse(raw); ['T', 'E', 'S', 'B'].forEach(function (k) { t[k] = Math.max(0, parseInt(o[k], 10) || 0); }); } } catch (e) {}
+    return t;
+  }
+  var tally = loadTally();
+  function saveTally() { try { localStorage.setItem(STORE, JSON.stringify(tally)); } catch (e) {} }
+  function renderClass() {
+    var mx = Math.max(1, tally.T, tally.E, tally.S, tally.B);
+    var tot = tally.T + tally.E + tally.S + tally.B;
+    var h = '';
+    ['T', 'E', 'S', 'B'].forEach(function (k) {
+      var p = PROFILES[k];
+      h += '<div class="classrow"><span class="badge">' + ICON(p.icon, 38) + '</span><div><div class="cname">' + p.name + '</div><div class="cbar"><i class="fill ' + k + '" style="width:' + Math.round(tally[k] / mx * 100) + '%"></i></div></div>' +
+        '<div class="counter"><button type="button" data-k="' + k + '" data-d="-1" aria-label="Menos um ' + p.name + '">−</button><output>' + tally[k] + '</output><button type="button" data-k="' + k + '" data-d="1" aria-label="Mais um ' + p.name + '">+</button></div></div>';
+    });
+    $('#classRows').innerHTML = h;
+    $('#classTotal').textContent = tot ? 'Alunos registados: ' + tot : 'Ainda não há alunos registados.';
+    $('#classReset').textContent = 'Apagar contagens';
+    armed = false;
+  }
+
+  /* eventos */
+  buildPicker();
+  $('#startBtn').addEventListener('click', startGame);
+  $('#opts').addEventListener('click', function (e) { var b = e.target.closest('.opt'); if (b && !b.disabled) answer(parseInt(b.dataset.i, 10)); });
+  $('#nextBtn').addEventListener('click', next);
+  document.addEventListener('keydown', function (e) {
+    if ($('#s-play').hidden || !st || st.answered || e.ctrlKey || e.metaKey || e.altKey) return;
+    var t = e.target;
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;
+    var i = 'abcd'.indexOf(e.key.toLowerCase());
+    if (i >= 0 && e.key.length === 1) answer(i);
+  });
+  $('#rate').addEventListener('input', function () { $('#rateOut').textContent = this.value; });
+  $('#helpSet').addEventListener('change', limitHelp);
+  $('#revealBtn').addEventListener('click', reveal);
+  $('#copyBtn').addEventListener('click', copyCode);
+  $('#againBtn').addEventListener('click', function () { stopClock(); show('s-start'); });
+  $('#tallyBtn').addEventListener('click', function () {
+    tops().forEach(function (k) { tally[k]++; });
+    saveTally();
+    this.disabled = true;
+    $('#tallyMsg').textContent = 'Somado ao mapa da turma.';
+  });
+  $('#goClass').addEventListener('click', function () { stopClock(); renderClass(); show('s-class'); $('#classTitle').focus({ preventScroll: true }); });
+  $('#classBack').addEventListener('click', function () { show('s-start'); });
+  $('#classRows').addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-k]');
+    if (!b) return;
+    var k = b.dataset.k;
+    tally[k] = Math.max(0, tally[k] + parseInt(b.dataset.d, 10));
+    saveTally();
+    renderClass();
+    var again = document.querySelector('button[data-k="' + k + '"][data-d="' + b.dataset.d + '"]');
+    if (again) again.focus();
+  });
+  var armed = false;
+  $('#classReset').addEventListener('click', function () {
+    if (!armed) { armed = true; this.textContent = 'Confirmar: apagar tudo'; return; }
+    armed = false;
+    tally = { T: 0, E: 0, S: 0, B: 0 };
+    saveTally();
+    renderClass();
+  });
+})();
+</script>
+
+</body>
+</html>
